@@ -67,17 +67,17 @@ test('worker allows only GET and sends CORS headers', async () => {
   assert.equal((await get(handle, '/other')).status, 404);
 });
 
-test('outage schedule selects Kryukivshchyna queue 2.2, preserves half hours and refreshes cache', async () => {
+test('outage schedule selects Shevchenkivka queue 6.2, preserves half hours and refreshes cache', async () => {
   let calls = 0;
   const handle = createHandler({ fetcher: async () => {
     calls++;
     return new Response('<div aria-label="Черга 5.2: без світла 00:00–03:00"></div>' +
-      '<div aria-label="Черга 2.2: без світла 09:00–13:00, 19:30–23:30"></div>');
+      '<div aria-label="Черга 6.2: без світла 09:00–13:00, 19:30–23:30"></div>');
   } });
   const first = await get(handle, '/api/outage-schedule');
   assert.equal(first.status, 200);
   const data = await first.json();
-  assert.equal(data.queue, '2.2');
+  assert.equal(data.queue, '6.2');
   assert.deepEqual(data.today, [0,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,2,1,1,1,2]);
   assert.equal((await get(handle, '/api/outage-schedule')).headers.get('X-Cache'), 'HIT');
   assert.equal(calls, 1);
